@@ -36,6 +36,7 @@ sub new
                 ssl_version     => 'TLSv1',
                 timeout         => 1,
 		ssl		=> 1,
+		debug		=> 1,
                 _cfg            => undef,
                 _section        => 'nessus',
 		_duration	=> 0,
@@ -187,7 +188,7 @@ sub __connect
 	my $sock = undef;
 	if( $this->ssl )
 		{
-        	# $IO::Socket::SSL::DEBUG = 1;
+        	# $IO::Socket::SSL::DEBUG = $this->{debug};
         	$sock = IO::Socket::SSL->new(
                         PeerAddr        => $this->host,
                         PeerPort        => $this->port,
@@ -354,6 +355,7 @@ sub port
         $this->{$key} = shift if( @_ );
         return($this->{$key});
         }
+
 sub ssl
         {
         my $this = shift;
@@ -540,7 +542,7 @@ Port that the nessusd daemon is listning to.
 
 =item ssl
 
-Connect to daemin using ssl cueerntly set to TLSV1, see L<ssl_version> to change.
+Turn on/off using ssl to connect to nessusd.
 (Default: 1)
 
 =item user
@@ -553,23 +555,19 @@ Password for the admin account.
 
 =item ntp_proto
 
-Protocol to use when connecting. It's going to try "fast_login" so make sure it supports it.
+NTP protocol version to use when connecting.
 (Default: 1.2)
 
 =item preferences
 
 A hash ref of valid nessus preferences such as those in nessusd.conf.
-Example:  preferences     => { plugin_set              => "10835", safe_checks => 'no' }
+ Example:  preferences     => { plugin_set => "10835", safe_checks => 'no' }
 
 =item timeout
 
 Timeout passed to L<IO::Socket> when connecting the remote server.
 (Default: 3)
 
-
-=item debug
-
-Currently only sets $IO::Socket::SSL::DEBUG = 1
 
 =item cfg ( PATH | REF )
 
@@ -742,7 +740,7 @@ Perhaps configuration from a .nessusrc. Could be gnarly.
 
 =head1 ACKNOWLEDGEMENTS
 
-This class relies heavily on work done by Jochen Wiedmann in the L<Net::Nessus::*> classes.
+This class relies heavily on work done by Jochen Wiedmann's L<Net::Nessus> bundle.
 
 
 =head1 SEE ALSO
